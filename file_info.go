@@ -3,7 +3,12 @@ package fileinfo
 import (
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
+	"strings"
+)
+
+const (
+	PathSep = string(os.PathSeparator)
 )
 
 // os.FileInfo + inode
@@ -22,7 +27,7 @@ func Stat(name string) (*FileInfo, error) {
 	}
 
 	info.fi = fi
-	info.dir = path.Dir(name)
+	info.dir = filepath.Dir(name)
 
 	if ino, err := info.getIno(); err == nil {
 		info.ino = ino
@@ -38,6 +43,20 @@ func IsDir(name string) bool {
 	}
 
 	return fi.IsDir()
+}
+
+func Split(absPath string) (dir, file string) {
+	return filepath.Dir(absPath), filepath.Base(absPath)
+}
+
+func SplitPath(absPath, rootPath string) []string {
+	str := strings.Replace(absPath, rootPath, "", -1)
+
+	if strings.Index(str, PathSep) == 0 {
+		return strings.Split(str, PathSep)[1:]
+	} else {
+		return strings.Split(str, PathSep)
+	}
 }
 
 func (fi FileInfo) String() string {
