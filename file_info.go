@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 const (
@@ -65,29 +66,37 @@ func (fi FileInfo) String() string {
 		t = "directory"
 	}
 
-	return fmt.Sprintf("Name:%s, Size:%d, Dir:%s, Ino:%d, Type:%s", fi.Name(), fi.Size(), fi.Dir(), fi.Ino(), t)
+	return fmt.Sprintf("Dir:%s, Name: %s, Size: %d, Ino: %d, Type: %s, ModTime: %s", fi.Dir(), fi.Name(), fi.Size(), fi.Ino(), t, fi.ModTime().String())
 }
 
-func (fi *FileInfo) Name() string {
+func (fi FileInfo) Name() string {
 	return fi.fi.Name()
 }
 
-func (fi *FileInfo) Size() int64 {
+func (fi FileInfo) Size() int64 {
 	return fi.fi.Size()
 }
 
-func (fi *FileInfo) IsDir() bool {
+func (fi FileInfo) Mode() os.FileMode {
+	return fi.fi.Mode()
+}
+
+func (fi FileInfo) ModTime() time.Time {
+	return fi.fi.ModTime()
+}
+
+func (fi FileInfo) IsDir() bool {
 	return fi.fi.IsDir()
 }
 
-func (fi *FileInfo) Dir() string {
+func (fi FileInfo) Dir() string {
 	return fi.dir
 }
 
-func (fi *FileInfo) Path() string {
+func (fi FileInfo) Path() string {
 	return fi.dir + PathSep + fi.Name()
 }
 
-func (fi *FileInfo) Ino() uint64 {
+func (fi FileInfo) Ino() uint64 {
 	return fi.ino
 }
